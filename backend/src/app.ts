@@ -9,6 +9,15 @@ import globalInfoRoutes from "./routes/globalInfoRoutes";
 
 const app = express();
 
+const corsOptions = {
+  origin: '*', // 或使用 '*' 允许所有源
+  // origin: 'https://eatme.fun', // 或使用 '*' 允许所有源
+  methods: ['GET', 'POST', 'OPTIONS'], // 确保包含所有需要的 HTTP 方法
+  allowedHeaders: ['Content-Type', 'Authorization'], // 确保包含 Authorization
+};
+
+app.use(cors(corsOptions));
+
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 1000,
@@ -16,11 +25,6 @@ const limiter = rateLimit({
     res.status(429).json({ code:429, msg: 'Too many requests. Please try again later.' });
   }
 });
-
-// 允许所有源的 CORS 配置
-app.use(cors());
-// 处理所有 OPTIONS 请求
-app.options('*', cors()); // 允许所有 OPTIONS 请求
 
 app.use(limiter);
 
