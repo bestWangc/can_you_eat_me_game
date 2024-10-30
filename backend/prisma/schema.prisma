@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model buff {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  fruit_id    Int    @default(0)
+  memo        String @db.VarChar(255)
+  type        Int    @default(0)
+  time        Int
+  value       Int
+  quality     Int
+  probability Int
+  status      Int    @default(1)
+  create_time Int
+  update_time Int?   @default(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model configs {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  unique_key  String @unique @db.VarChar(255)
+  name        String @db.VarChar(255)
+  value       String @db.VarChar(255)
+  status      Int    @default(1)
+  create_time Int
+  update_time Int?   @default(0)
+  token_type  Int    @default(0)
+
+  @@unique([id, value])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fruit {
+  id           Int    @id @default(autoincrement()) @db.UnsignedInt
+  fruit_id     Int    @unique
+  status       Int    @default(1)
+  name         String @db.VarChar(255)
+  quality      Int    @db.TinyInt
+  attack       Int
+  attack_speed Int    @default(0)
+  desc         String @db.VarChar(255)
+  little_desc  String @db.VarChar(255)
+  baojilv      Int    @default(0)
+  baoji        Int    @default(0)
+  unlock       Int    @default(0)
+  grid_index   Int
+  create_time  Int
+  update_time  Int?   @default(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fruit_level_up {
+  id            Int  @id @default(autoincrement()) @db.UnsignedInt
+  fruit_id      Int
+  level         Int
+  add_attack    Int
+  add_atk_speed Int
+  up_cost_gold  Int
+  up_cost_piece Int
+  create_time   Int
+  update_time   Int? @default(0)
+
+  @@index([fruit_id], map: "furit_id_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model levels {
+  id            Int    @id @default(autoincrement()) @db.UnsignedInt
+  name          String @db.VarChar(255)
+  level_award   String @db.VarChar(255)
+  wave_ids      String @db.VarChar(255)
+  award_wave_id String @db.VarChar(10)
+  silver_coin   Int
+  award_box_1   String @db.VarChar(255)
+  award_box_2   String @db.VarChar(255)
+  award_box_3   String @db.VarChar(255)
+  pic           Int
+  create_time   Int
+  update_time   Int?   @default(0)
+  status        Int    @default(1)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model logs {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  action      String @db.VarChar(255)
+  memo        String @db.Text
+  create_time Int
+
+  @@index([action], map: "action_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model monster {
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  name        String  @db.VarChar(255)
+  desc        String  @db.VarChar(255)
+  img         String  @db.VarChar(255)
+  blood       Int
+  speed       Int
+  exp         Int
+  is_boss     Boolean @default(false)
+  type        Int
+  resistance  Float
+  create_time Int
+  update_time Int?    @default(0)
+  status      Int     @default(1)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model shop {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  fruit_id    Int    @default(1)
+  fragments   Int    @default(1)
+  diamonds    BigInt @default(1)
+  create_time Int    @default(0)
+  update_time Int?   @default(0)
+
+  @@index([create_time], map: "create_time_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model talent {
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  fruit_id    Int
+  type        Int
+  desc        String  @db.VarChar(255)
+  value       String? @default("") @db.VarChar(255)
+  unlock      Int
+  status      Int     @default(1)
+  create_time Int
+  update_time Int?    @default(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model user_bag {
+  id           Int  @id @default(autoincrement()) @db.UnsignedInt
+  uid          Int
+  fruit_id     Int
+  fruit_number Int? @default(0)
+  quality      Int  @default(0)
+  fragments    Int  @default(0)
+  fruit_level  Int  @default(1)
+  attack       Int  @default(0)
+  atk_speed    Int  @default(0)
+  baoji        Int  @default(0)
+  baojilv      Int  @default(0)
+  status       Int  @default(1)
+  create_time  Int
+  update_time  Int? @default(0)
+
+  @@unique([uid, fruit_id])
+  @@index([uid], map: "uid_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id                        Int    @id @default(autoincrement()) @db.UnsignedInt
+  telegram_id               BigInt @unique
+  username                  String @default("") @db.VarChar(255)
+  address                   String @default("") @db.VarChar(50)
+  level_id                  Int    @default(0)
+  gold_amount               BigInt @default(0)
+  diamond_amount            BigInt @default(0)
+  last_sign_time            Int?   @default(0)
+  sign_day                  Int?   @default(0)
+  last_get_free_gold_time   Int?   @default(0)
+  last_getfree_diamond_time Int?   @default(0)
+  status                    Int    @default(1)
+  buy_usdt                  BigInt @default(0)
+  invite_code               String @unique
+  invite_number             Int?   @default(0)
+  referred_by               Int?   @unique @default(0)
+  create_time               Int
+  update_time               Int?   @default(0)
+
+  @@index([address], map: "address_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model wave {
+  id             Int    @id @default(autoincrement()) @db.UnsignedInt
+  name           String @db.VarChar(255)
+  monster_id     String @db.VarChar(255)
+  blood_multiply Float
+  status         Int    @default(1)
+  create_time    Int
+  update_time    Int?   @default(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model buff_copy1 {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  desc        String @db.VarChar(255)
+  type        Int
+  time        Int
+  value       String @db.VarChar(255)
+  probability Int
+  status      Int    @default(1)
+  create_time Int
+  update_time Int?   @default(0)
+}
+
+model user_fight_day_reward {
+  id          Int  @id @default(autoincrement()) @db.UnsignedInt
+  uid         Int
+  level_id    Int  @default(1)
+  sign_day    Int
+  day_reward  Int
+  create_time Int
+  update_time Int? @default(0)
+
+  @@unique([uid, sign_day])
+  @@index([uid], map: "uid_idx")
+}
+
+model user_fight {
+  id          Int  @id @default(autoincrement()) @db.UnsignedInt
+  uid         Int
+  level_id    Int  @default(1)
+  cost_gold   Int  @default(0)
+  fight_win   Int  @default(0)
+  create_time Int
+  update_time Int? @default(0)
+
+  @@index([uid], map: "uid_idx")
+}
+
+model user_fight_logs {
+  id              Int    @id @default(autoincrement()) @db.UnsignedInt
+  uid             Int
+  address         String @default("") @db.VarChar(50)
+  level_id        Int    @default(1)
+  fruit_id        Int
+  fruit_attack    Int
+  fruit_atk_speed Int
+  fruit_baojilv   Int
+  fruit_baoji     Int
+  talent_id       Int
+  create_time     Int
+  update_time     Int?   @default(0)
+  cost_diamonds   Int?
+  cost_golds      Int?
+
+  @@unique([uid, level_id, fruit_id])
+  @@index([uid], map: "uid_idx")
+}
+
+model user_fight_box {
+  id          Int    @id @default(autoincrement()) @db.UnsignedInt
+  uid         Int
+  level_id    Int
+  obtain_box  String @db.VarChar(255)
+  create_time Int
+  udpate_time Int?   @default(0)
+
+  @@index([uid], map: "uid")
+  @@index([uid, level_id], map: "uid_level_id_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model transaction_log {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt
+  hash        String   @unique(map: "hash_idx") @db.VarChar(65)
+  amount      String?  @db.VarChar(255)
+  comment     String   @db.VarChar(255)
+  create_time DateTime @default(now()) @db.Timestamp(0)
+}
