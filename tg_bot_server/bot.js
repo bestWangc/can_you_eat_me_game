@@ -57,14 +57,14 @@ bot.command("start", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     //成员操作
     memberHandler(userId, username);
     const mainMenuMarkup = new grammy_1.InlineKeyboard();
-    const userInfo = "\nUser id: " + userId + "\nUser name: " + username;
+    // const userInfo="\nUser id: "+userId+"\nUser name: "+username;
     // 添加 Mini Web App 按钮到主菜单
     mainMenuMarkup.webApp("Play Now", "https://eatme.fun");
     // mainMenuMarkup.text("My Points", "CHECK_POINTS");
     // mainMenuMarkup.text("Gift Cards", "CHECK_GIFTCARDS");
     yield ctx.replyWithPhoto('https://eatme.fun/eatme.png', {
         // caption: "<b>Welcome to our game</b>\n"+userInfo,
-        caption: "<b>Welcome to our game</b>\n",
+        caption: "<b>Are you ready for a crazy game? Protect A Tao!</b>\n",
         parse_mode: "HTML",
         reply_markup: mainMenuMarkup,
     });
