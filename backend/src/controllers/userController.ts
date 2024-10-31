@@ -212,7 +212,7 @@ export const getUserToken = [
 
       // 查询用户
       let user = await prisma.users.findUnique({
-        select: { id: true, address: true, telegram_id: true },
+        select: { id: true, telegram_id: true },
         where: { telegram_id: bigTelegram_id, status: 1 },
       });
       if (_.isEmpty(user)) {
@@ -230,7 +230,6 @@ export const getUserToken = [
       const userKey = {
         uid: user.id,
         telegram_id: user.telegram_id.toString(),
-        address: user.address,
       };
 
       const token = generateToken(userKey);
