@@ -9,31 +9,8 @@ import { convertBigIntToJSON } from "../utils/tools";
 import _ from "lodash";
 import moment from "moment";
 import { prisma } from "../utils/prismaInstance";
+import { generateDailyShops } from "../utils/getShop";
 import cron from "node-cron";
-
-async function generateDailyShops() {
-  try {
-    const numberOfShops = 50;
-    const newShops = await refreshShopCore(numberOfShops);
-
-    await prisma.shop.deleteMany({});
-    await prisma.shop.createMany({
-      data: newShops,
-    });
-
-    console.log("Daily shops generated successfully.");
-  } catch (error) {
-    console.error("Error generating daily shops:", error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-// 0点执行
-cron.schedule("0 0 * * *", async () => {
-  console.log("Running daily shop generation task...");
-  await generateDailyShops();
-});
 
 generateDailyShops();
 
@@ -79,52 +56,6 @@ export const getDiscountShops = [
     }
   },
 ];
-
-async function refreshShopCore(
-  // telegram_id: string,
-  number: number
-): Promise<any[]> {
-  const newShops = [];
-  for (let i = 0; i < number; i++) {
-    const fruitQuality = getFruitQuality();
-    const { fragments, diamonds } = getFragmentAndPrice();
-
-    const fruits = await prisma.$queryRaw`
-      SELECT * FROM fruit
-      WHERE quality = ${fruitQuality}
-      ORDER BY RAND()
-      LIMIT 1
-    `;
-
-    const fruit = (fruits as fruit[])[0];
-
-    if (fruit) {
-      newShops.push({
-        fruit_id: fruit.fruit_id,
-        fragments,
-        diamonds,
-        create_time: Math.floor(Date.now() / 1000),
-      });
-    }
-  }
-  return newShops;
-}
-
-function getFruitQuality(): number {
-  const rand = Math.random() * 100;
-  if (rand <= 50) return 1;
-  if (rand <= 80) return 2;
-  return 3;
-}
-
-function getFragmentAndPrice(): { fragments: number; diamonds: number } {
-  const rand = Math.random() * 100;
-  if (rand <= 60) {
-    return { fragments: 3, diamonds: 15 };
-  } else {
-    return { fragments: 5, diamonds: 27 };
-  }
-}
 
 export const buyFruitFragment = [
   async (req: Request, res: Response) => {

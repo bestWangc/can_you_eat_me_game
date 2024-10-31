@@ -25,12 +25,13 @@ export const getBag = [
       }
 
       const user = await prisma.users.findUnique({
-        select: { id: true },
+        select: { id: true,invite_code:true },
         where: { id: uid, status: 1 },
       });
       if (!user) {
         return errorRes(res, "User not found");
       }
+
       const userID = user.id;
       const fields = [
         "id",

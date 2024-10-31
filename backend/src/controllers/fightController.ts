@@ -60,13 +60,13 @@ export const dailySignIn = [
       if (user.referred_by) {
         await prisma.users.update({
           where: {
-            referred_by: user.referred_by,
+            id: user.referred_by,
           },
           data: {
             gold_amount: {
               increment: BigInt(rewardGold * 5) / BigInt(100),
             },
-            Invitation_rewards: {
+            invite_rewards: {
               increment: (rewardGold * 5) / 100,
             },
           },
