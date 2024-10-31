@@ -1,11 +1,10 @@
 import { Router } from "express";
 import {
   getUserInfo,
-  generateInviteCode,
   useInviteCode,
   getReferrals,
   getUserToken,
-  refreshUserToken,
+  refreshUserToken
 } from "../controllers/userController";
 import {
   authenticate,
@@ -17,5 +16,6 @@ router.post("/userInfo", authenticate, getUserInfo);
 // router.get("/", getAllUsers);
 router.post("/token", getUserToken);
 router.post("/refreshToken", authenticate, refreshUserToken);
+router.post("/bindInviteCode", authenticate, useInviteCode);
 
 export { router as userRouter };

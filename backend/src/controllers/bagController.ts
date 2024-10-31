@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import { successRes, errorRes } from "../utils/responseHandler";
 import { logAction } from "../utils/logger";
-import { cacheMiddleware } from "../middlewares/cacheMiddleware";
-import { updateTimeMiddleware } from "../middlewares/updateTime";
 import { createSelectFields } from "../utils/tools";
 import { prisma } from "../utils/prismaInstance";
 import Redis from "ioredis";
@@ -92,6 +89,9 @@ export const getBag = [
   },
 ];
 
+/**
+ * no use
+ */
 export const getFruitDetails = [
   // cacheMiddleware,
   async (req: Request, res: Response) => {
@@ -137,7 +137,6 @@ export const getFruitDetails = [
 ];
 
 export const upgradeFruit = [
-  // updateTimeMiddleware("user_bag", (req) => ({ uid: req.user?.uid })),
   async (req: Request, res: Response) => {
     try {
       const { fruitId } = req.body;

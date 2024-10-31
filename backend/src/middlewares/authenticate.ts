@@ -21,12 +21,6 @@ export const authenticate = (
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
-  // req.user = {
-  //   uid: 1,
-  //   telegram_id: "6335461272",
-  //   address: ""
-  // };
-
   if (!token) {
     return res.status(401).json({ code: 401, msg: "Unauthorized" });
   }
