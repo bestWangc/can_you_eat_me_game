@@ -10,16 +10,6 @@ import { createSelectFields } from "../utils/tools";
 import { prisma } from "../utils/prismaInstance";
 import { handlerBuyToken } from "../utils/listeningCont";
 import _ from "lodash";
-import {
-  TonClient,
-  Address,
-  Cell,
-  JettonMaster,
-  fromNano,
-  beginCell,
-} from "@ton/ton";
-import { getHttpEndpoint } from "@orbs-network/ton-access";
-import axios from "axios";
 import cron from "node-cron";
 
 // 0点执行
