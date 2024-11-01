@@ -336,6 +336,9 @@ export const openBox = [
 
       //get price
       const boxKey = boxType == 1 ? "boxPrice" : "bigBoxPrice";
+
+      const addAmount = boxType == 1 ? 50 : 500;
+
       const configs = await prisma.configs.findFirst({
         select: { value: true },
         where: { unique_key: boxKey, status: 1 },
@@ -360,7 +363,14 @@ export const openBox = [
       await prisma.$transaction(async (prisma) => {
         await prisma.users.update({
           where: { id: uid },
-          data: { diamond_amount: user.diamond_amount - BigInt(configs.value) },
+          data: {
+            diamond_amount: {
+              decrement: BigInt(configs.value)
+            },
+            gold_amount: {
+              increment: BigInt(addAmount)
+            }
+          },
         });
 
         //TODO: 效率待优化，问题：循环里面查询sql
@@ -421,6 +431,7 @@ export const openBox = [
 
         await logAction("open_box", `uid:${uid},box_type:${boxType}`);
       });
+
       if (!_.isEmpty(fruitDetails)) {
         fruitDetails.sort((a, b) => a.quality - b.quality);
       }
@@ -430,7 +441,7 @@ export const openBox = [
       const redis = new Redis();
       await redis.setex(cacheKey, 1, "");
 
-      successRes(res, fruitDetails);
+      successRes(res, {fruitDetails,addGold:addAmount});
     } catch (error) {
       errorRes(res, (error as Error).message);
     }
