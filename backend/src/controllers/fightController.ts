@@ -17,7 +17,7 @@ export const dailySignIn = [
         return errorRes(res, "user id is required");
       }
       const user = await prisma.users.findUnique({
-        // select: { id: true, last_sign_time: true, sign_day: true },
+        select: { id: true, last_sign_time: true, sign_day: true, level_id: true, referred_by: true },
         where: { id: uid, status: 1 },
       });
       const rewardBase = await prisma.configs.findUnique({
@@ -28,11 +28,16 @@ export const dailySignIn = [
       if (!user || !rewardBase) {
         return errorRes(res, "User and Configs not found");
       }
+
       const currentTime = Math.floor(Date.now() / 1000);
       const oneDay = 24 * 60 * 60;
 
       if (user.last_sign_time && currentTime - user.last_sign_time < oneDay) {
         return errorRes(res, "only sign in once a day");
+      }
+
+      if (user.level_id <= 0) {
+        return errorRes(res, "Something wrong, please try again later");
       }
 
       const signDay = user.sign_day ?? 0;
