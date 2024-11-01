@@ -2,17 +2,12 @@ import { Request, Response } from "express";
 import { PrismaClient, fruit } from "@prisma/client";
 import { successRes, errorRes } from "../utils/responseHandler";
 import { logAction } from "../utils/logger";
-import { cacheMiddleware } from "../middlewares/cacheMiddleware";
-import { Fruit } from "../models/models";
 import Redis from "ioredis";
 import { convertBigIntToJSON } from "../utils/tools";
 import _ from "lodash";
 import moment from "moment";
 import { prisma } from "../utils/prismaInstance";
-import { generateDailyShops } from "../utils/getShop";
-import cron from "node-cron";
 
-generateDailyShops();
 
 process.on("SIGINT", async () => {
   await prisma.$disconnect();
