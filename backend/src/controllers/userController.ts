@@ -175,26 +175,26 @@ export const getReferrals = [
 
 export const getAllUsers = [
   // cacheMiddleware,
-  async (req: Request, res: Response) => {
-    try {
-      const { address } = req.query;
-      const users = await prisma.users.findMany({
-        where: address ? { address: { contains: address as string } } : {},
-      });
+  // async (req: Request, res: Response) => {
+  //   try {
+  //     const { address } = req.query;
+  //     const users = await prisma.users.findMany({
+  //       where: address ? { address: { contains: address as string } } : {},
+  //     });
 
-      const serializedUsers = users.map((user) => ({
-        ...user,
-        telegram_id: user.telegram_id.toString(),
-        gold_amount: user.gold_amount.toString(),
-        diamond_amount: user.diamond_amount.toString(),
-        buy_usdt: user.buy_usdt.toString(),
-      }));
+  //     const serializedUsers = users.map((user) => ({
+  //       ...user,
+  //       telegram_id: user.telegram_id.toString(),
+  //       gold_amount: user.gold_amount.toString(),
+  //       diamond_amount: user.diamond_amount.toString(),
+  //       buy_usdt: user.buy_usdt.toString(),
+  //     }));
 
-      successRes(res, serializedUsers);
-    } catch (error) {
-      errorRes(res, (error as Error).message);
-    }
-  },
+  //     successRes(res, serializedUsers);
+  //   } catch (error) {
+  //     errorRes(res, (error as Error).message);
+  //   }
+  // },
 ];
 
 //获取用户jwt token

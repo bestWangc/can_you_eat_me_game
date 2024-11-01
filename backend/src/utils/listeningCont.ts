@@ -7,7 +7,6 @@ import {
   beginCell,
 } from "@ton/ton";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
-import cron from "node-cron";
 import { prisma } from "./prismaInstance";
 import axios from "axios";
 import _ from "lodash";
@@ -15,9 +14,14 @@ import _ from "lodash";
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS || "";
 const API_KEY = process.env.TON_API_KEY;
 
+interface transData {
+  lt: string;
+  amount: number;
+  comment: string;
+}
 
  export async function handlerBuyToken() {
-  const data = await decodeTransaction();
+  const data:Record<string,transData> = await decodeTransaction();
   console.log(data);
 
   // 10,1000;68,7000;128,14800;328,36800
@@ -144,7 +148,7 @@ async function decodeTransaction() {
   const trans = await client.getTransactions(contractAddress, { limit: 20 });
 
   //判断该hash 是否已经处理过
-  let returnData: Record<string, object> = {};
+  let returnData: Record<string, transData> = {};
   for (const tx of trans) {
     const inMsg = tx.inMessage;
     // const hashBase64 = tx.hash().toString("base64");
@@ -253,8 +257,8 @@ async function decodeTransaction() {
       }
       if (transAmount && comment) {
         returnData[hash] = {
-          lt: tx.lt,
-          amount: transAmount,
+          lt: tx.lt.toString(),
+          amount: Number(transAmount),
           comment: comment,
         };
       }

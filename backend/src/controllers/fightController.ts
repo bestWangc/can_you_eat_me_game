@@ -414,7 +414,7 @@ export const winLevelReward = [
         if (user.referred_by) {
           await prisma.users.update({
             where: {
-              referred_by: user.referred_by,
+              id: user.referred_by,
             },
             data: {
               gold_amount: {
