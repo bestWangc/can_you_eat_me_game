@@ -2,11 +2,12 @@ import { PrismaClient, fruit } from "@prisma/client";
 import { prisma } from "./prismaInstance";
 import cron from "node-cron";
 
+
 function getFruitQuality(): number {
   const rand = Math.random() * 100;
-  if (rand <= 50) return 1;
-  if (rand <= 80) return 2;
-  return 3;
+  if (rand <= 3) return 3; // 3% 概率返回“紫色”
+  if (rand <= 68) return 1;      // 65% 概率返回 1
+  return 2;                      // 剩余 32% 概率返回 2
 }
 
 function getFragmentAndPrice(): { fragments: number; diamonds: number } {
