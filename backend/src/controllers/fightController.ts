@@ -511,7 +511,7 @@ export const openLevelRewardBox = [
       const levelAwardData = obtainBoxInfo.split(";");
 
       let boxFound = false;
-      let updatedObtainBox = "";
+
       for (let i = 0; i < levelAwardData.length; i++) {
         const [boxLevel, boxStatus] = levelAwardData[i].split(",").map(Number);
         if (boxLevel === awardBoxNumber) {
@@ -609,6 +609,7 @@ export const openLevelRewardBox = [
                 data: {
                   uid: uid,
                   fruit_id: fruitIdNum,
+                  fruit_number: 1,
                   fragments: count,
                   create_time: Math.floor(Date.now() / 1000),
                 },
@@ -623,43 +624,56 @@ export const openLevelRewardBox = [
       const redis = new Redis();
       await redis.setex(cacheKey, 1, "");
 
-      await prisma.users.update({
-        where: { id: uid },
-        data: {
-          gold_amount: {
-            increment: newGoldAmount,
+      let updatedObtainBox = levelAwardData.join(";");
+      await prisma.$transaction(async (prisma) => {
+        await prisma.users.update({
+          where: { id: uid },
+          data: {
+            gold_amount: {
+              increment: newGoldAmount,
+            },
+            diamond_amount: {
+              increment: newDiamondAmount,
+            },
           },
-          diamond_amount: {
-            increment: newDiamondAmount,
-          },
-        },
+        });
+        if (user.referred_by) {
+          const inviteReward = (newGoldAmount * BigInt(5)) / BigInt(100);
+          await prisma.users.update({
+            where: {
+              id: user.referred_by,
+            },
+            data: {
+              gold_amount: {
+                increment: inviteReward,
+              },
+              invite_rewards: {
+                increment: inviteReward,
+              },
+            },
+          });
+        }
+
+        if (needInsertObtainBox) {
+          await prisma.user_fight_box.create({
+            data: {
+              uid: uid,
+              level_id: level_id,
+              obtain_box: updatedObtainBox,
+              create_time: Math.floor(Date.now() / 1000),
+            },
+          });
+        } else {
+          await prisma.user_fight_box.update({
+            where: {
+              id: userFightBoxId,
+            },
+            data: {
+              obtain_box: updatedObtainBox,
+            },
+          });
+        }
       });
-
-      // levelAwardData[award_box_number - 1] = levelAwardData[
-      //   award_box_number - 1
-      // ].replace(",0", ",1");
-      updatedObtainBox = levelAwardData.join(";");
-
-      if (needInsertObtainBox) {
-        await prisma.user_fight_box.create({
-          data: {
-            uid: uid,
-            level_id: level_id,
-            obtain_box: updatedObtainBox,
-            create_time: Math.floor(Date.now() / 1000),
-          },
-        });
-      } else {
-        await prisma.user_fight_box.update({
-          where: {
-            id: userFightBoxId,
-          },
-          data: {
-            obtain_box: updatedObtainBox,
-          },
-        });
-      }
-
       await logAction(
         "open_level_reward_box",
         `uid:${uid},level:${level_id},award_box_number:${award_box_number}`
