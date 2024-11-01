@@ -64,7 +64,7 @@ bot.command("start", (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     // mainMenuMarkup.text("Gift Cards", "CHECK_GIFTCARDS");
     yield ctx.replyWithPhoto('https://eatme.fun/eatme.png', {
         // caption: "<b>Welcome to our game</b>\n"+userInfo,
-        caption: "<b>Are you ready for a crazy game? Protect A Tao!</b>\n",
+        caption: "<b>Stinky zombie, stop hitting A Tao! Come quickly to protect A Tao!</b>\n",
         parse_mode: "HTML",
         reply_markup: mainMenuMarkup,
     });
