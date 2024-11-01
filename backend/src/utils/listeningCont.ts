@@ -97,7 +97,7 @@ const API_KEY = process.env.TON_API_KEY;
       where: { id: uid },
       data: {
         diamond_amount: {
-          decrement: BigInt(diamondAmount),
+          increment: BigInt(diamondAmount),
         },
         update_time: currentTime,
       },

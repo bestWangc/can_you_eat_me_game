@@ -29,7 +29,7 @@ async function refreshShopCore(
 
     const fruits = await prisma.$queryRaw`
       SELECT * FROM fruit
-      WHERE quality = ${fruitQuality}
+      WHERE quality = ${fruitQuality} and status = 1
       ORDER BY RAND()
       LIMIT 1
     `;
