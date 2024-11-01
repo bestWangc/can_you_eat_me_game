@@ -75,6 +75,7 @@ export const getUserInfo = [
         gold_amount: user.gold_amount?.toString(),
         diamond_amount: user.diamond_amount?.toString(),
         buy_usdt: user.buy_usdt?.toString(),
+        invite_rewards: user.invite_rewards?.toString(),
         invite_number:userReferCount ?? 0
       };
 

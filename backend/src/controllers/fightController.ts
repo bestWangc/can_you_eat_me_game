@@ -395,7 +395,7 @@ export const winLevelReward = [
           where: { id: uid },
           data: {
             gold_amount: {
-              increment: goldAmount,
+              increment: newGoldAmount,
             },
             ...(level_id > currentLevelId ? { level_id } : {}),
           },
@@ -412,13 +412,17 @@ export const winLevelReward = [
         });
 
         if (user.referred_by) {
+          const inviteReward = (newGoldAmount * BigInt(5)) / BigInt(100);
           await prisma.users.update({
             where: {
               id: user.referred_by,
             },
             data: {
               gold_amount: {
-                increment: (goldAmount * BigInt(5)) / BigInt(100),
+                increment: inviteReward,
+              },
+              invite_rewards: {
+                increment: inviteReward,
               },
             },
           });
