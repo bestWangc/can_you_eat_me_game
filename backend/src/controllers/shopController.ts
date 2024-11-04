@@ -7,6 +7,7 @@ import { convertBigIntToJSON } from "../utils/tools";
 import _ from "lodash";
 import moment from "moment";
 import { prisma } from "../utils/prismaInstance";
+import Translator from "../utils/Translator";
 
 process.on("SIGINT", async () => {
   await prisma.$disconnect();
@@ -30,17 +31,24 @@ export const getDiscountShops = [
         return successRes(res, JSON.parse(data));
       }
 
-      const result = await prisma.$queryRaw`
+      const result:any = await prisma.$queryRaw`
           SELECT sp.id,sp.fragments,sp.diamonds,sp.fruit_id,f.name,f.little_desc,f.quality
           FROM shop sp
           LEFT JOIN fruit f ON f.fruit_id = sp.fruit_id
           WHERE f.status = 1
           and sp.create_time >= ${startTimestap} and sp.create_time <= ${endTimestap}
       `;
-      let dataRes = {};
+      let dataRes:any = [];
       //缓存6小时
       if (!_.isEmpty(result)) {
-        dataRes = convertBigIntToJSON(result);
+        const translator = new Translator();
+        for (const row of result) {
+          const tempObj = row;
+          tempObj.name = translator.translate(row.name,"en");
+          tempObj.id = Number(row.id.toString());
+          tempObj.diamonds = Number(row.diamonds.toString());
+          dataRes.push(tempObj);
+        }
         await redis.setex(cacheKey, 3600, JSON.stringify(dataRes));
       }
 

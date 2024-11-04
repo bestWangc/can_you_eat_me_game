@@ -5,12 +5,13 @@ import { cacheMiddleware } from "../middlewares/cacheMiddleware";
 import { createSelectFields } from "../utils/tools";
 import { prisma } from "../utils/prismaInstance";
 import _ from "lodash";
+import Translator from "../utils/Translator";
 
 
 export const getAllBuffs = [
     cacheMiddleware(() => "buffs"),
     async (req: Request, res: Response) => {
-        const fields = ["id", "fruit_id","memo", "type", "time", "value", "probability","quality"];
+        const fields = ["id", "fruit_id", "memo", "type", "time", "value", "probability", "quality"];
         const selectField = createSelectFields(fields);
         try {
             const buffs = await prisma.buff.findMany({
@@ -44,7 +45,7 @@ export const getAllConfigs = [
 ];
 
 export const getAllFruits = [
-    cacheMiddleware(() => "fruits"),
+    // cacheMiddleware(() => "fruits"),
     async (req: Request, res: Response) => {
         const fields = [
             "id",
@@ -73,8 +74,11 @@ export const getAllFruits = [
             });
             let fruitsRes = {};
             if (!_.isEmpty(fruits)) {
+                const translator = new Translator();
                 fruitsRes = fruits.reduce((acc, item) => {
                     const tempKey = "_" + item.fruit_id;
+                    item.name = translator.translate(item.name, "en");
+                    item.desc = translator.translate(item.desc, "en");
                     acc[tempKey] = item; // 将整个对象作为值
                     return acc;
                 }, {} as { [key: string]: any });
@@ -122,7 +126,7 @@ export const getAllLevels = [
                 },
             });
             const formattedObject = levels.reduce((acc, level) => {
-                const levelID:number = level.id;
+                const levelID: number = level.id;
                 acc[levelID] = level;
                 return acc;
             }, {} as Record<number, object>);
@@ -138,17 +142,17 @@ export const getAllMonsters = [
     cacheMiddleware(() => "monsters"),
     async (req: Request, res: Response) => {
         try {
-            const fields = ["id","desc","img","img","blood","speed","exp","is_boss","resistance"];
+            const fields = ["id", "desc", "img", "img", "blood", "speed", "exp", "is_boss", "resistance"];
             const selectField = createSelectFields(fields);
             const monsters = await prisma.monster.findMany({
-                select:selectField,
-                where:{status:1}
+                select: selectField,
+                where: { status: 1 }
             });
-            const formattedObject = monsters.reduce((acc,monster)=>{
-                const monsterId:number = monster.id;
+            const formattedObject = monsters.reduce((acc, monster) => {
+                const monsterId: number = monster.id;
                 acc[monsterId] = monster;
                 return acc;
-            },{} as Record<number,object>);
+            }, {} as Record<number, object>);
 
             successRes(res, formattedObject);
         } catch (error) {
@@ -162,7 +166,7 @@ export const getAllTalents = [
     async (req: Request, res: Response) => {
         try {
             const talents = await prisma.talent.findMany({
-                where:{status:1}
+                where: { status: 1 }
             });
             successRes(res, talents);
         } catch (error) {
@@ -203,7 +207,7 @@ export const getAllWaves = [
             }, {} as Record<number, boolean>);
             //判断是否有boss
             const formatWaves = waves.reduce((acc, wave) => {
-                const tempData:string = wave.monster_id;
+                const tempData: string = wave.monster_id;
                 const tempMon = tempData.split(";");
                 const hasBoss = tempMon.some(monster => {
                     const tempMonID = Number(monster.split(',')[0]);
