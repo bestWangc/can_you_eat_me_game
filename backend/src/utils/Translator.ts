@@ -85,6 +85,68 @@ export default class Translator {
 		'西瓜大炮会在命中敌人后爆炸': {
 			en: "The Watermelon cannon has launched a bomb",
 		},
+
+		'蒸桑拿之地': {
+			en: "Sauna place",
+		},
+		'高级桑拿之地': {
+			en: "Premium sauna place",
+		},
+		'捞死鱼之海': {
+			en: "Fishing Dead Sea",
+		},
+		'海王集中营': {
+			en: "Aquaman's concentration camp",
+		},
+		'打野王丛林': {
+			en: "Jungle King",
+		},
+		'高级打野丛林': {
+			en: "Advanced Jungle",
+		},
+		'一片绿草原': {
+			en: "A vast green meadow",
+		},
+		'整片绿草原': {
+			en: "A whole green prairie",
+		},
+		'荒漠部落': {
+			en: "Desert tribe!",
+		},
+		'荒漠风暴': {
+			en: "Desert storm",
+		},
+		'无妄之海': {
+			en: "The Sea of ​​Nothingness",
+		},
+		'不尽死海': {
+			en: "The endless Dead Sea!",
+		},
+		'暗黑丛林': {
+			en: "Dark Jungle",
+		},
+		'丛林深处': {
+			en: "Jungle Deep",
+		},
+		'平原咆哮': {
+			en: "Roar of the plains",
+		},
+		'平原禁地': {
+			en: "The forbidden plains",
+		},
+
+		'攻击力+X%': {
+			en: "Attack power +X%!",
+		},
+		'攻击速度+X%': {
+			en: "Attack speed +X%!",
+		},
+		'暴击率+X%': {
+			en: "Critical hit rate +X%!",
+		},
+		'暴击伤害+X%': {
+			en: "Critical damage +X%!",
+		},
 	};
 
 	// 根据中文获取对应的翻译

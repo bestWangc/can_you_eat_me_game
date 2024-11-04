@@ -125,9 +125,12 @@ export const getAllLevels = [
                     status: 1,
                 },
             });
+            const translator = new Translator();
             const formattedObject = levels.reduce((acc, level) => {
                 const levelID: number = level.id;
-                acc[levelID] = level;
+                const tempData = level;
+                tempData.name = translator.translate(level.name,"en");
+                acc[levelID] = tempData;
                 return acc;
             }, {} as Record<number, object>);
 
@@ -165,10 +168,20 @@ export const getAllTalents = [
     cacheMiddleware(() => "talents"),
     async (req: Request, res: Response) => {
         try {
+            const fields = ["id", "fruit_id", "desc", "value", "unlock"];
+            const selectField = createSelectFields(fields);
             const talents = await prisma.talent.findMany({
+                select:selectField,
                 where: { status: 1 }
             });
-            successRes(res, talents);
+            const translator = new Translator();
+            const formattedArray = talents.map(talent => {
+                const tempData = { ...talent }; // 创建 talent 的副本
+                tempData.desc = translator.translate(talent.desc, "en");
+                return tempData; // 返回翻译后的对象
+            });
+
+            successRes(res, formattedArray);
         } catch (error) {
             errorRes(res, (error as Error).message);
         }
