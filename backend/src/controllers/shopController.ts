@@ -8,7 +8,6 @@ import _ from "lodash";
 import moment from "moment";
 import { prisma } from "../utils/prismaInstance";
 
-
 process.on("SIGINT", async () => {
   await prisma.$disconnect();
   process.exit(0);
@@ -272,7 +271,7 @@ export const openBoxCore = (boxKey: string) => {
     const purpleCount = getRandomInt(1, 3);
     const blueCount = getRandomInt(6, 8);
 
-    const guaranteedFragments = getRandomInt(1, 3);
+    const guaranteedFragments = getRandomInt(1, 2);
 
     const greenFragments = distributeFragments(75, Array(greenCount).fill(0));
     const purpleFragments = distributeFragments(
@@ -365,7 +364,7 @@ export const openBox = [
           where: { id: uid },
           data: {
             diamond_amount: {
-              decrement: BigInt(configs.value)
+              decrement: boxPrice
             },
             gold_amount: {
               increment: BigInt(addAmount)
@@ -373,61 +372,62 @@ export const openBox = [
           },
         });
 
-        //TODO: 效率待优化，问题：循环里面查询sql
-        for (const { quality, fragments } of fragmentsDistribution) {
-          const fruits = await prisma.$queryRaw`
-            SELECT * FROM fruit
-            WHERE quality = ${quality}
-            ORDER BY RAND()
-            LIMIT 1
-            `;
+        const fruitQualityList = [...new Set(fragmentsDistribution.map(({ quality }) => quality))];
+        const fruits = await prisma.fruit.findMany({
+          select: { id: true, fruit_id: true, quality: true },
+          where: {
+            status: 1,
+            quality: {
+              in: fruitQualityList
+            }
+          }
+        });
 
-          const fruit = (fruits as fruit[])[0];
+        const fruitMap = new Map();
+        fruits.forEach((fruit) => {
+          if (!fruitMap.has(fruit.quality)) {
+            fruitMap.set(fruit.quality, []);
+          }
+          fruitMap.get(fruit.quality).push(fruit);
+        });
 
-          if (fruit) {
+        await Promise.all(fragmentsDistribution.map(async ({ quality, fragments }) => {
+          const availableFruits = fruitMap.get(quality);
+
+          if (availableFruits && availableFruits.length > 0) {
+            // 随机选择一个水果
+            const fruit = availableFruits[Math.floor(Math.random() * availableFruits.length)];
+
             fruitDetails.push({
               fruitId: fruit.fruit_id,
               quality: fruit.quality,
               fragments: fragments,
             });
 
-            const userBag = await prisma.user_bag.findUnique({
+            await prisma.user_bag.upsert({
               where: {
                 uid_fruit_id: {
                   uid: user.id,
                   fruit_id: fruit.fruit_id,
                 },
               },
+              update: {
+                fragments: {
+                  increment: fragments,
+                },
+                fruit_number: 1,
+              },
+              create: {
+                uid: user.id,
+                fruit_number: 1,
+                fruit_id: fruit.fruit_id,
+                quality,
+                fragments,
+                create_time: Math.floor(Date.now() / 1000),
+              },
             });
-
-            if (userBag) {
-              await prisma.user_bag.update({
-                where: {
-                  uid_fruit_id: {
-                    uid: user.id,
-                    fruit_id: fruit.fruit_id,
-                  },
-                },
-                data: {
-                  fragments: {
-                    increment: fragments,
-                  },
-                  fruit_number: 1,
-                },
-              });
-            } else {
-              await prisma.user_bag.create({
-                data: {
-                  uid: user.id,
-                  fruit_id: fruit.fruit_id,
-                  quality,
-                  fragments,
-                  create_time: Math.floor(Date.now() / 1000),
-                },
-              });
-            }
           }
-        }
+        }));
 
         await logAction("open_box", `uid:${uid},box_type:${boxType}`);
       });
@@ -441,7 +441,7 @@ export const openBox = [
       const redis = new Redis();
       await redis.setex(cacheKey, 1, "");
 
-      successRes(res, {fruitDetails,addGold:addAmount});
+      successRes(res, { fruitDetails, addGold: addAmount });
     } catch (error) {
       errorRes(res, (error as Error).message);
     }
