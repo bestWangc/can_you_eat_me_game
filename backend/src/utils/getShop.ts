@@ -66,8 +66,3 @@ export async function generateDailyShops() {
   }
 }
 
-// 0点执行
-cron.schedule("0 0 * * *", async () => {
-  console.log("Running daily shop generation task...");
-  await generateDailyShops();
-});

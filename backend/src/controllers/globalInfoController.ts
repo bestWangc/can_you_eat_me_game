@@ -18,7 +18,14 @@ export const getAllBuffs = [
                 select: selectField,
                 where: { status: 1 },
             });
-            successRes(res, buffs);
+
+            const translator = new Translator();
+            const formattedArray = buffs.map(buff => {
+                const tempData = { ...buff };
+                tempData.memo = translator.translate(buff.memo, "en");
+                return tempData; // 返回翻译后的对象
+            });
+            successRes(res, formattedArray);
         } catch (error) {
             errorRes(res, (error as Error).message);
         }
@@ -45,7 +52,7 @@ export const getAllConfigs = [
 ];
 
 export const getAllFruits = [
-    // cacheMiddleware(() => "fruits"),
+    cacheMiddleware(() => "fruits"),
     async (req: Request, res: Response) => {
         const fields = [
             "id",

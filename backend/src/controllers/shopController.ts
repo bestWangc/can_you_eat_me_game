@@ -8,6 +8,14 @@ import _ from "lodash";
 import moment from "moment";
 import { prisma } from "../utils/prismaInstance";
 import Translator from "../utils/Translator";
+import cron from "node-cron";
+import { generateDailyShops } from "../utils/getShop";
+
+// 23点执行
+cron.schedule("0 23 * * *", async () => {
+  console.log("Running daily shop generation task...");
+  await generateDailyShops();
+});
 
 process.on("SIGINT", async () => {
   await prisma.$disconnect();
