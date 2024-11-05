@@ -16,4 +16,18 @@ contract EatMe with Jetton {
         self.content = content;
         self.max_supply = max_supply;
     }
+
+    receive(msg: Mint) { // 0xfc708bd2
+        let ctx: Context = context();
+        require(ctx.sender == self.owner, "Not owner");
+        require(self.mintable, "Not mintable");
+        require(self.total_supply + msg.amount <= self.max_supply, "Max supply exceeded");
+        self.mint(msg.receiver, msg.amount, self.owner); // (to, amount, response_destination)
+    }
+
+    receive("Owner: MintClose") {
+        let ctx: Context = context();
+        require(ctx.sender == self.owner, "Not owner");
+        self.mintable = false;
+    }
 }
