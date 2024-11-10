@@ -26,8 +26,6 @@ interface transData {
 
   // 10,1000;68,7000;128,14800;328,36800
   const diamondMap: Record<number, number> = {
-    0.01: 10, //test
-    0.02: 20, //test
     10: 1000,
     68: 7000,
     128: 14800,
