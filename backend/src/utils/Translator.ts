@@ -175,6 +175,9 @@ export default class Translator {
 		'杨桃的暴击几率+X%': {
 			en: "Blind starfruit' critical hit rate +X%",
 		},
+		'杨桃攻击力+X%': {
+			en: "Blind starfruit' attack power +X%",
+		},
 		'杨桃的攻击速度+X%': {
 			en: "Blind starfruit' attack speed +X%",
 		},
@@ -202,6 +205,9 @@ export default class Translator {
 		'元婴果攻击力+X%': {
 			en: "Yuan Ying Fruit' attack power +X%",
 		},
+		'元婴果攻击速度+X%': {
+			en: "Yuan Ying Fruit' attack speed +X%",
+		},
 		'元婴果暴击率+X%': {
 			en: "Yuan Ying Fruit' critical hit rate +X%",
 		},
@@ -213,6 +219,9 @@ export default class Translator {
 		},
 		'西瓜攻击力+X%': {
 			en: "WM cannon' attack power +X%",
+		},
+		'榴莲攻击力+X%': {
+			en: "Durian King' attack power +X%",
 		},
 		'榴莲暴击率+X%': {
 			en: "Durian King' critical hit rate +X%",
