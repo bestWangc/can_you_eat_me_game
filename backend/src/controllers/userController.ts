@@ -27,7 +27,7 @@ cron.schedule("*/5 * * * *", async () => {
   } finally {
     isRunning = false;
     // 关闭数据库连接或其他清理操作
-    await prisma.$disconnect(); // 如果使用 Prisma
+    // await prisma.$disconnect(); // 如果使用 Prisma
   }
 });
 

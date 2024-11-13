@@ -11,8 +11,8 @@ import Translator from "../utils/Translator";
 import cron from "node-cron";
 import { generateDailyShops } from "../utils/getShop";
 
-// 23点执行
-cron.schedule("0 23 * * *", async () => {
+// 0点执行
+cron.schedule("1 0 * * *", async () => {
   console.log("Running daily shop generation task...");
   await generateDailyShops();
 });
