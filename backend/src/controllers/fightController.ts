@@ -430,8 +430,7 @@ export const winLevelReward = [
         }
 
         await logAction(
-          "win_level_reward",
-          `uid:${uid},level:${level_id},reward${newGoldAmount.toString()},${allocatedFragments} `
+          "win_level_reward",`uid:${uid},level:${level_id},reward:${newGoldAmount.toString()}`
         );
       });
 
